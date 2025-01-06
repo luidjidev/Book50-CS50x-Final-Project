@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Results
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <h1 class="text-white mb-4">Search Results</h1>
+        <div class="list-group">
+            {% for book in books %}
+            <div class="list-group-item d-flex gap-3 py-3">
+                <!-- Imagem -->
+                <div class="flex-shrink-0">
+                    <a href="/book/{{ book['id'] }}">
+                        <img src="{{ book['volumeInfo'].get('imageLinks', {}).get('thumbnail', 'https://static-01.daraz.pk/p/3fe9c8a1dbfb5b3910e306183ec5d669.jpg') }}"
+                            alt="{{ book['volumeInfo'].get('title', 'No Title') }}" style="width: 100px;">
+                    </a>
+                </div>
+
+                <!-- Informações -->
+                <div class="flex-grow-1 text-start">
+                    <h5 class="mb-1">{{ book['volumeInfo'].get('title', 'No Title') }}</h5>
+                    <div class="text-start">
+                        <p class="mb-1">{{ book['volumeInfo'].get('authors', ['Unknown Author'])[0] }}</p>
+
+                        <!-- Categorias -->
+                        <div class="mb-2">
+                            {% set categories = book['volumeInfo'].get('categories', None) %}
+                            {% if categories %}
+                            {% for category in categories %}
+                            <p class="mb-1">{{ category }}</p>
+                            {% endfor %}
+                            {% else %}
+                            <p class="mb-1">Undefined</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Prévia da descrição -->
+                        <p class="mb-2">
+                            {{ book['volumeInfo'].get('description', 'No description available.')[:200] }}...
+                        </p>
+                    </div>
+
+                    <!-- Botões -->
+                    <div class="btn-group">
+                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Add to Shelf
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <form action="/add-to-shelf" method="POST" class="dropdown-item">
+                                    <input type="hidden" name="status" value="reading">
+                                    <input type="hidden" name="book_id" value="{{ book['id'] }}">
+                                    <input type="hidden" name="redirect_url" value="/search?type={{ search_type }}&query={{ search_query }}">
+                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">Reading</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="/add-to-shelf" method="POST" class="dropdown-item">
+                                    <input type="hidden" name="status" value="to_read">
+                                    <input type="hidden" name="book_id" value="{{ book['id'] }}">
+                                    <input type="hidden" name="redirect_url" value="/search?type={{ search_type }}&query={{ search_query }}">
+                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">To Read</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="/add-to-shelf" method="POST" class="dropdown-item">
+                                    <input type="hidden" name="status" value="read">
+                                    <input type="hidden" name="book_id" value="{{ book['id'] }}">
+                                    <input type="hidden" name="redirect_url" value="/search?type={{ search_type }}&query={{ search_query }}">
+                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">Already Read</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="/add-to-shelf" method="POST" class="dropdown-item">
+                                    <input type="hidden" name="status" value="dropped">
+                                    <input type="hidden" name="book_id" value="{{ book['id'] }}">
+                                    <input type="hidden" name="redirect_url" value="/search?type={{ search_type }}&query={{ search_query }}">
+                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">Dropped</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const shelfActions = document.querySelectorAll('.shelf-action');
+        
+        shelfActions.forEach(action => {
+            action.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const status = this.dataset.status;
+                const bookId = this.dataset.bookId;
+                
+                fetch('/add-to-shelf', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        status: status,
+                        book_id: bookId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Mostra mensagem de sucesso
+                        alert('Book status updated successfully!');
+                    } else {
+                        // Mostra mensagem de erro
+                        alert('Error updating book status');
+                    }
+                });
+            });
+        });
+    });
+    </script>
+{% endblock %}

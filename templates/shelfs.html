@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My Shelfs
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="list-group">
+            {% for book in books %}
+            <div class="list-group-item d-flex gap-3 py-3">
+                <!-- Image -->
+                <div class="flex-shrink-0">
+                    <a href="/book/{{ book['id'] }}">
+                        <img src="{{ book['volumeInfo'].get('imageLinks', {}).get('thumbnail', 'https://static-01.daraz.pk/p/3fe9c8a1dbfb5b3910e306183ec5d669.jpg') }}"
+                            alt="{{ book['volumeInfo'].get('title', 'No Title') }}" style="width: 100px;">
+                    </a>
+                </div>
+
+                <!-- Information -->
+                <div class="flex-grow-1 text-start">
+                    <h5 class="mb-1">{{ book['volumeInfo'].get('title', 'No Title') }}</h5>
+                    <div class="text-start">
+                        {% set authors = book['volumeInfo'].get('authors', ['Unknown Author']) %}
+                        {% if authors %}
+                            {% for author in authors %}
+                                <p class="mb-1">by: {{ author }}</p>
+                            {% endfor %}
+                        {% else %}
+                            <p class="mb-1">Unknown Author</p>
+                        {% endif %}
+                        <!-- Categories -->
+                        <div class="mb-2">
+                            {% set categories = book['volumeInfo'].get('categories', None) %}
+                            {% if categories %}
+                            {% for category in categories %}
+                            <p class="mb-1">{{ category }}</p>
+                            {% endfor %}
+                            {% else %}
+                            <p class="mb-1">Undefined</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Description preview -->
+                        <p class="mb-2">
+                            {{ book['volumeInfo'].get('description', 'No description available.')[:200] }}...
+                        </p>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="btn-group">
+                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Update Status
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <form action="/add-to-shelf" method="POST" class="dropdown-item">
+                                    <input type="hidden" name="status" value="reading">
+                                    <input type="hidden" name="book_id" value="{{ book['id'] }}">
+                                    <input type="hidden" name="redirect_url" value="{{ request.path }}?{{ request.query_string.decode() }}">
+                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">Reading</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="/add-to-shelf" method="POST" class="dropdown-item">
+                                    <input type="hidden" name="status" value="to_read">
+                                    <input type="hidden" name="book_id" value="{{ book['id'] }}">
+                                    <input type="hidden" name="redirect_url" value="{{ request.path }}?{{ request.query_string.decode() }}">
+                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">To Read</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="/add-to-shelf" method="POST" class="dropdown-item">
+                                    <input type="hidden" name="status" value="read">
+                                    <input type="hidden" name="book_id" value="{{ book['id'] }}">
+                                    <input type="hidden" name="redirect_url" value="{{ request.path }}?{{ request.query_string.decode() }}">
+                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">Read</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="/add-to-shelf" method="POST" class="dropdown-item">
+                                    <input type="hidden" name="status" value="dropped">
+                                    <input type="hidden" name="book_id" value="{{ book['id'] }}">
+                                    <input type="hidden" name="redirect_url" value="{{ request.path }}?{{ request.query_string.decode() }}">
+                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">Dropped</button>
+                                </form>
+                            </li>
+                        </ul>
+                        <form action="/remove-from-shelf/{{ book['id'] }}" method="POST">
+                            <input type="hidden" name="redirect_url" value="{{ request.path }}?{{ request.query_string.decode() }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+

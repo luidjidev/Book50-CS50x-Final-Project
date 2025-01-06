@@ -1,0 +1,68 @@
+* {
+    font-family: inherit;
+    font-style: normal;
+}
+
+body {
+    background-image: url('img/wallpaper.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    padding-top: 76px;
+}
+
+.navbar {
+    background-color: whitesmoke;
+    height: 80px;
+    margin: 20px;
+    border-radius: 16px;
+    padding: 0.5rem;
+}
+
+.navbar-brand {
+    color: black;
+    font-weight: 500;
+    font-size: 24px;
+}
+
+.login-button {
+    background-color: #009970;
+    color: white;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s background-color;
+}
+
+.login-button:hover {
+    background-color: #007a58;
+}
+
+.navbar-toggler {
+    border: none;
+    font-size: 1.25rem
+}
+
+.navbar-toggler:focus, .btn-close:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.nav-link {
+    font-weight: 500;
+    position: relative;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #000;
+}
+
+.nav-link:hover::before, .nav-link.active::before {
+    width: 100%;
+}
+
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
