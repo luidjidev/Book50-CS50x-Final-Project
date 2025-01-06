@@ -146,7 +146,7 @@ def search():
             return render_template('results.html', books=[])
             
         # If we have parameters, perform the search
-        api_key = 'AIzaSyBgbz9IztVv6WoI71Z-P2CrwQSCVRmxRrk'
+        api_key = ''
         if search_type == 'title':
             url = f'https://www.googleapis.com/books/v1/volumes?q=intitle:{search_query}&maxResults=40&key={api_key}'
         elif search_type == 'author':
@@ -176,7 +176,7 @@ def search():
 @app.route('/book/<string:book_id>')
 def book_details(book_id):
     """Fetch book details from the Google Books API"""
-    api_key = 'AIzaSyBgbz9IztVv6WoI71Z-P2CrwQSCVRmxRrk'
+    api_key = ''
     url = f'https://www.googleapis.com/books/v1/volumes/{book_id}?key={api_key}'
 
     response = requests.get(url)
@@ -210,7 +210,7 @@ def shelfs():
         book_ids = db.execute(query, session["user_id"], status_text)
 
         books = []
-        api_key = 'AIzaSyBgbz9IztVv6WoI71Z-P2CrwQSCVRmxRrk'
+        api_key = ''
         
         for book in book_ids:
             book_id = book["book_id"]
